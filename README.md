@@ -15,7 +15,7 @@ Características
 bash
 Copiar
 Editar
-git clone https://github.com/tu-usuario/habit-tracker.git
+git clone https://github.com/usuario/habit-tracker.git
 cd habit-tracker
 
 2️⃣ Instala dependencias
