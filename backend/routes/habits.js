@@ -1,6 +1,8 @@
-const express = require('express');
+import express from 'express';
+import axios from 'axios';
+import Habit from '../models/Habit.js';
+
 const router = express.Router();
-const Habit = require('../models/Habit');
 
 router.post('/', async (req, res) => {
   try {
@@ -45,4 +47,14 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+// Handler para obtener hábitos desde otra API
+router.get('/external', async (req, res) => {
+  try {
+    const response = await axios.get("http://localhost:5000/habits");
+    res.status(200).json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: "Error obteniendo hábitos" });
+  }
+});
+
+export default router;
