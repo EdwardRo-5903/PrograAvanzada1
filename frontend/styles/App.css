@@ -1,9 +1,4 @@
-/* 
-  Este archivo contiene los estilos CSS para la aplicación. 
-  Puedes agregar estilos globales, estilos para componentes específicos, 
-  y cualquier otro estilo que necesites para tu aplicación.
-*/
-
+/* Global Styles */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -14,12 +9,14 @@ h1, h2, h3 {
     color: #333;
 }
 
+/* Layout Styles */
 .container {
     width: 80%;
     margin: auto;
     overflow: hidden;
 }
 
+/* Component Styles */
 .button {
     display: inline-block;
     font-size: 16px;

@@ -1,11 +1,9 @@
-import { createStore, applyMiddleware } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import thunk from 'redux-thunk';
+// filepath: c:\Users\EdwardDev\habit-tracker\frontend\src\store\store.js
+import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from '../reducers/rootReducer';
 
-const store = createStore(
-  rootReducer,
-  composeWithDevTools(applyMiddleware(thunk))
-);
+const store = configureStore({
+  reducer: rootReducer,
+});
 
 export default store;

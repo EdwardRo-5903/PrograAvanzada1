@@ -1,8 +1,15 @@
-// filepath: habit-tracker/habit-tracker/frontend/src/reducers/habitReducer.js
-import { ADD_HABIT, GET_HABITS, UPDATE_HABIT, DELETE_HABIT } from '../actions/habitActions';
+import {
+  ADD_HABIT,
+  GET_HABITS,
+  UPDATE_HABIT,
+  DELETE_HABIT,
+  MARK_HABIT_AS_DONE,
+  HANDLE_ERROR,
+} from '../actions/habitActions';
 
 const initialState = {
   habits: [],
+  error: null, // Manejo de errores opcional
 };
 
 const habitReducer = (state = initialState, action) => {
@@ -28,6 +35,18 @@ const habitReducer = (state = initialState, action) => {
       return {
         ...state,
         habits: state.habits.filter(habit => habit._id !== action.payload),
+      };
+    case MARK_HABIT_AS_DONE:
+      return {
+        ...state,
+        habits: state.habits.map(habit =>
+          habit._id === action.payload._id ? action.payload : habit
+        ),
+      };
+    case HANDLE_ERROR:
+      return {
+        ...state,
+        error: action.payload,
       };
     default:
       return state;
