@@ -30,7 +30,7 @@ const app = express();
 // Middlewares de seguridad
 app.use(helmet());
 //app.use(cors({ origin: 'http://localhost:3000', credentials: true })); // Permitir solicitudes desde el frontend
-app.use(cors({ origin: 'https://frontend-delta-eight-78.vercel.app', credentials: true })); // Permitir solicitudes desde el frontend
+app.use(cors({ origin: 'https://frontend-gamma-blush-59.vercel.app', credentials: true })); // Permitir solicitudes desde el frontend
 
 app.use(express.json()); // Parsear JSON en las solicitudes
 
