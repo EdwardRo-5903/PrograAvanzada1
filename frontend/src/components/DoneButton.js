@@ -1,10 +1,17 @@
-// filepath: c:\Users\EdwardDev\habit-tracker\frontend\components\DoneButton.js
 import React from 'react';
 
-const DoneButton = () => {
+const DoneButton = ({ onDone, disabled }) => {
   return (
-    <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-      Done
+    <button
+      onClick={onDone}
+      disabled={disabled}
+      className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+        disabled
+          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          : 'bg-green-600 text-white hover:bg-green-700'
+      }`}
+    >
+      Completar
     </button>
   );
 };

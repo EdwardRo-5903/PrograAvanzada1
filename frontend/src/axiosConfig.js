@@ -1,7 +1,10 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://localhost:5000/api", // Cambia esto si tu backend usa otra URL base
+  //baseURL: "http://localhost:5000/api", // Cambia esto si tu backend usa otra URL base
+  //baseURL: "https://backend-ozs0fala0-mynrgs.vercel.app/api", 
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  
 });
 
 // Interceptor para añadir el token JWT a las solicitudes

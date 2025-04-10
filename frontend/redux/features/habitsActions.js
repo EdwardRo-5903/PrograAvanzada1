@@ -1,32 +1,48 @@
-import axios from "../axiosConfig";
-import { setHabits, addHabit, deleteHabit, setError } from "./habitsSlice";
+import axios from "../../src/axiosConfig";
+import { setHabits, addHabit, setError, updateHabit } from "./habitsSlice";
+
+// Función helper para manejo de errores
+const handleAsyncError = (error, defaultMessage) => {
+  const message = error.response?.data?.message || error.message || defaultMessage;
+  const status = error.response?.status || 500;
+  return { message, status };
+};
 
 export const fetchHabits = () => async (dispatch) => {
-    try {
-        const response = await axios.get("/habits");
-        dispatch(setHabits(response.data));
-    } catch (error) {
-        console.error("Error al obtener hábitos", error);
-        dispatch(setError("No se pudieron cargar los hábitos. Intenta nuevamente."));
-    }
+  try {
+    const { data } = await axios.get("/habits");
+    dispatch(setHabits(data));
+    return data;
+  } catch (error) {
+    const { message } = handleAsyncError(error, "Error cargando hábitos");
+    dispatch(setError(message));
+    throw new Error(message);
+  }
 };
 
-export const createHabit = (habit) => async (dispatch) => {
-    try {
-        const response = await axios.post("/habits", habit);
-        dispatch(addHabit(response.data));
-    } catch (error) {
-        console.error("Error al agregar hábito", error);
-        dispatch(setError("No se pudo agregar el hábito. Intenta nuevamente."));
-    }
+export const createHabit = (habitData) => async (dispatch) => {
+  try {
+    const { data } = await axios.post("/habits", habitData);
+    dispatch(addHabit(data));
+    return data;
+  } catch (error) {
+    const { message } = handleAsyncError(error, "Error creando hábito");
+    dispatch(setError(message));
+    throw new Error(message);
+  }
 };
 
-export const removeHabit = (id) => async (dispatch) => {
-    try {
-        await axios.delete(`/habits/${id}`);
-        dispatch(deleteHabit(id));
-    } catch (error) {
-        console.error("Error al eliminar hábito", error);
-        dispatch(setError("No se pudo eliminar el hábito. Intenta nuevamente."));
-    }
+export const markHabitAsDone = (id) => async (dispatch) => {
+  try {
+    const { data } = await axios.put(`/habits/${id}/done`);
+    dispatch(updateHabit(data));
+    return data;
+  } catch (error) {
+    const { message } = handleAsyncError(
+      error, 
+      `Error completando hábito (ID: ${id})`
+    );
+    dispatch(setError(message));
+    throw new Error(message);
+  }
 };

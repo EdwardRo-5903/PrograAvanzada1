@@ -1,40 +1,74 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getHabits, markHabitAsDone } from '../actions/habitActions';
+import { markHabitAsDone } from '../../redux/features/habitsSlice'; 
 import ProgressBar from './ProgressBar';
 import DoneButton from './DoneButton';
 
 const HabitComponent = () => {
   const dispatch = useDispatch();
-  const habits = useSelector((state) => state.habits.habits); // Obtiene los hábitos del estado global
-  const error = useSelector((state) => state.habits.error); // Obtiene el error del estado global
+  const habits = useSelector((state) => state.habits.habits);
+  const [habitMessages, setHabitMessages] = useState({}); // Estado para almacenar mensajes para cada hábito
 
-  // Obtener los hábitos al cargar el componente
-  useEffect(() => {
-    dispatch(getHabits());
-  }, [dispatch]);
+  const calculateProgress = (streak) => {
+    return Math.min(Math.round((streak / 66) * 100), 100);
+  };
 
-  const handleDone = (id) => {
-    dispatch(markHabitAsDone(id)); // Marca el hábito como completado
+  const formatDate = (dateString) => {
+    if (!dateString) return 'No completado aún';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  };
+
+  const handleMarkAsDone = async (habitId) => {
+    try {
+      await dispatch(markHabitAsDone(habitId)).unwrap(); // usar unwrap con createAsyncThunk
+      setHabitMessages((prev) => ({ ...prev, [habitId]: '' })); // mensaje de success
+    } catch (error) {
+      const message = error.message || 'Error al completar el hábito';
+      setHabitMessages((prev) => ({ ...prev, [habitId]: message }));
+    }
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-semibold mb-4 text-center">Lista de Hábitos</h2>
-      {error && <p className="text-red-500 text-center">{error}</p>} {/* Muestra el error si existe */}
-      {habits.length === 0 ? (
-        <p className="text-center">No hay hábitos disponibles. ¡Agrega uno nuevo!</p>
-      ) : (
-        <ul className="list-none space-y-4">
-          {habits.map((habit) => (
-            <li key={habit._id} className="flex items-center space-x-4">
-              <span className="flex-1">{habit.name}</span>
-              <ProgressBar progress={Math.min((habit.streak / 66) * 100, 100)} />
-              <DoneButton onDone={() => handleDone(habit._id)} />
-            </li>
-          ))}
-        </ul>
-      )}
+    <div className="space-y-6">
+      {habits.map((habit) => (
+        <div
+          key={habit._id}
+          className="p-6 bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-lg text-gray-800">{habit.name}</h3>
+            <span className="text-sm text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full">
+              {habit.streak} / 66 días
+            </span>
+          </div>
+          <div className="text-sm text-gray-600 mb-4">
+            Última completitud: {formatDate(habit.lastCompleted)}
+          </div>
+          <div className="flex items-center gap-4">
+            <ProgressBar progress={calculateProgress(habit.streak)} />
+            <DoneButton
+              onDone={() => handleMarkAsDone(habit._id)}
+              disabled={habitMessages[habit._id] === 'El hábito ya fue completado hoy'}
+            />
+          </div>
+          {habitMessages[habit._id] && (
+            <p
+              className={`text-sm mt-2 text-center ${
+                habitMessages[habit._id] === 'El hábito ya fue completado hoy'
+                  ? 'text-green-600'
+                  : 'text-red-600'
+              }`}
+            >
+              {habitMessages[habit._id]}
+            </p>
+          )}
+        </div>
+      ))}
     </div>
   );
 };

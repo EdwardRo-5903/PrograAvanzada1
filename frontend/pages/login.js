@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 const Login = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleChange = (e) => {
@@ -13,12 +14,23 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(''); // Limpiar errores previos
+    setIsLoading(true); // Mostrar indicador de carga
+
     try {
       const response = await axios.post('/users/login', formData);
       localStorage.setItem('token', response.data.token); // Guardar el token en localStorage
       router.push('/'); // Redirigir a la página principal
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al iniciar sesión');
+      if (err.response) {
+        setError(err.response.data.message || 'Credenciales inválidas');
+      } else if (err.request) {
+        setError('No se pudo conectar con el servidor. Inténtalo más tarde.');
+      } else {
+        setError('Ocurrió un error inesperado. Inténtalo más tarde.');
+      }
+    } finally {
+      setIsLoading(false); // Ocultar indicador de carga
     }
   };
 
@@ -55,8 +67,9 @@ const Login = () => {
         <button
           type="submit"
           className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+          disabled={isLoading}
         >
-          Iniciar Sesión
+          {isLoading ? 'Iniciando...' : 'Iniciar Sesión'}
         </button>
         <p className="mt-4 text-center">
           ¿No tienes una cuenta?{' '}

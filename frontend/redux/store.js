@@ -5,6 +5,10 @@ const store = configureStore({
   reducer: {
     habits: habitsReducer,
   },
+  middleware: (getDefaultMiddleware) => 
+    getDefaultMiddleware({
+      serializableCheck: false // Necesario para manejar acciones asíncronas y objetos Date
+    })
 });
 
 export default store;
